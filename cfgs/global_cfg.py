@@ -7,20 +7,20 @@ def get_total_settings():
     """
     parser.add_argument('--dropout', type=float, default=0.5)
     parser.add_argument('--seed', type=int, default=1)
-    parser.add_argument('--checkpoints_dir', type=str, default='/Users/bismarck/PycharmProjects/NLP/checkpoints')
+    parser.add_argument('--checkpoints_dir', type=str, default='/home/hanhuaye/PythonProject/NLP/checkpoints')
     parser.add_argument('--model_name', type=str, default='BiLSTM', help='BiLSTM/Transformer')
 
     """
     ========================Data========================
     """
-    parser.add_argument('--data_dir', type=str, default='/Users/bismarck/PycharmProjects/NLP/data')
-    parser.add_argument('--news_dir', type=str, default='/Users/bismarck/PycharmProjects/NLP/data/fakenews')
-    parser.add_argument('--word2int_path', type=str, default='/Users/bismarck/PycharmProjects/NLP/data/word2int.pkl')
-    parser.add_argument('--sentences_path', type=str, default='/Users/bismarck/PycharmProjects/NLP/data/digitized_sentences.pkl')
+    parser.add_argument('--data_dir', type=str, default='/home/hanhuaye/PythonProject/NLP/data')
+    parser.add_argument('--news_dir', type=str, default='/home/hanhuaye/PythonProject/NLP/data/THUCNews')
+    parser.add_argument('--word2int_path', type=str, default='/home/hanhuaye/PythonProject/NLP/data/word2int.pkl')
+    parser.add_argument('--sentences_path', type=str, default='/home/hanhuaye/PythonProject/NLP/data/digitized_sentences.pkl')
 
-    parser.add_argument('--train_path', type=str, default='/Users/bismarck/PycharmProjects/NLP/data/train.pkl')
-    parser.add_argument('--valid_path', type=str, default='/Users/bismarck/PycharmProjects/NLP/data/valid.pkl')
-    parser.add_argument('--test_path', type=str, default='/Users/bismarck/PycharmProjects/NLP/data/test.pkl')
+    parser.add_argument('--train_path', type=str, default='/home/hanhuaye/PythonProject/NLP/data/train.pkl')
+    parser.add_argument('--valid_path', type=str, default='/home/hanhuaye/PythonProject/NLP/data/valid.pkl')
+    parser.add_argument('--test_path', type=str, default='/home/hanhuaye/PythonProject/NLP/data/test.pkl')
 
     """
     ========================LSTM Settings========================
