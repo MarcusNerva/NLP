@@ -16,6 +16,6 @@ unset __conda_setup
 
 conda activate py37
 
-nohup python /home/hanhuaye/PythonProject/NLP/test.py --is_bilstm > \
+nohup python -u /home/hanhuaye/PythonProject/NLP/test.py --is_bilstm > \
     /home/hanhuaye/PythonProject/NLP/myscripts/test.log \
     2>&1 &
