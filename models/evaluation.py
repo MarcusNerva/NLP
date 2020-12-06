@@ -123,7 +123,7 @@ def eval(cfgs, model, dataloader):
     prediction, gts = [], []
     model.eval()
     for i, (sentences, label, length) in enumerate(dataloader):
-        result = model(sentences)
+        result = model(sentences, length)
         result = F.softmax(result, dim=1)
         result = torch.argmax(result, dim=1)
         prediction += result

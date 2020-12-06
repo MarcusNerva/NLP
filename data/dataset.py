@@ -44,6 +44,8 @@ class DatasetTHUNews(Dataset):
         tuple = self.dataset[idx]
         numberic, label = tuple[0], tuple[1]
         numberic = np.array(numberic).astype(int)
+        if len(numberic) > 50:
+            numberic = numberic[:50]
         length = len(numberic)
         # print(type(numberic))
 

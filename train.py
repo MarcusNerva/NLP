@@ -80,13 +80,13 @@ if __name__ == '__main__':
             loss_meter.add(train_loss.item())
             # print('#############Over#############')
 
-            if i % 1 == 0:
+            if i % visualize_every == 0:
                 vis.plot('train_loss', loss_meter.value()[0])
                 information = 'best_score is ' + (str(best_score) if best_score is not None else '0.0')
                 vis.log(information)
 
             is_best = False
-            if (i) % save_checkpoint_every:
+            if (i + 1) % save_checkpoint_every:
                 precision, recall, f_score = eval(cfgs, model, valid_dataloader)
                 vis.log('{}'.format('=====F1 score is ' + str(f_score)) + ' iter= ' + str(i))
 
