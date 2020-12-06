@@ -1,0 +1,1 @@
+from .global_cfg import get_total_settings

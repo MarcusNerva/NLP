@@ -1,0 +1,1 @@
+from .dataset import DatasetTHUNews, collate_fn
