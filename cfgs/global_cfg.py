@@ -50,6 +50,7 @@ def get_total_settings():
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--grad_clip', type=float, default=0.1)
     parser.add_argument('--patience', type=int, default=20)
+    parser.add_argument('--cut_length', type=int, default=40)
 
     parser.add_argument('--learning_rate', type=float, default=3e-4, help='learning rate')
     parser.add_argument('--learning_rate_decay_start', type=int, default=6,help='after how many iteration begin learning rate decay')

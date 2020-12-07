@@ -30,6 +30,7 @@ class DatasetTHUNews(Dataset):
             dataset_path = cfgs.test_path
 
         self.mode = mode
+        self.cut_length = cfgs.cut_length
         with open(dataset_path, 'rb') as f:
             self.dataset = pickle.load(f)
         with open(word2int_path, 'rb') as f:
@@ -44,8 +45,8 @@ class DatasetTHUNews(Dataset):
         tuple = self.dataset[idx]
         numberic, label = tuple[0], tuple[1]
         numberic = np.array(numberic).astype(int)
-        if len(numberic) > 50:
-            numberic = numberic[:50]
+        if len(numberic) > self.cut_length:
+            numberic = numberic[:self.cut_length]
         length = len(numberic)
         # print(type(numberic))
 
