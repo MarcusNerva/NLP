@@ -134,5 +134,4 @@ class TextClassifierTransformer(nn.Module):
         output = self.transformer(sentences)
         output, _ = torch.max(output, dim=1)
         output = self.classifier(output)
-        print(output.shape)
         return output
