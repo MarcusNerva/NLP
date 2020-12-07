@@ -19,7 +19,7 @@ if __name__ == '__main__':
     model.load_state_dict(torch.load(checkpoints_path))
     model.to(device)
 
-    precision, recall, f_score = eval(cfgs, model, test_dataloader)
+    precision, recall, f_score = eval(cfgs, model, test_dataloader, device)
     print('###########precision == {precision}###########'.format(precision=precision))
     print('###########recall == {recall}###########'.format(recall=recall))
     print('###########f_score == {f_score}###########'.format(f_score=f_score))
