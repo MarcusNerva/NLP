@@ -132,6 +132,6 @@ def eval(cfgs, model, dataloader, device):
     label = [i for i in range(14)]
     precision = multi_precision(prediction, gts, label)
     recall = multi_recall(prediction, gts, label)
-    f_score = multi_recall(prediction, gts, label)
+    f_score = multi_f_beta(prediction, gts, label)
 
     return precision, recall, f_score
