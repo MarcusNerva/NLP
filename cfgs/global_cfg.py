@@ -61,5 +61,11 @@ def get_total_settings():
     parser.add_argument('--visualize_every', type=int, default=10, help='show us loss every x iteration')
     parser.add_argument('--save_checkpoint_every', type=int, default=500)
 
+    """
+    ========================Testing Settings========================
+    """
+    parser.add_argument('--test_model', type=str, default='')
+
+
     args = parser.parse_args()
     return args

@@ -8,14 +8,16 @@ import os
 if __name__ == '__main__':
     cfgs = get_total_settings()
     seed = cfgs.seed
+    test_model = cfgs.test_model
     checkpoints_dir = cfgs.checkpoints_dir
-    checkpoints_path = os.path.join(checkpoints_dir, cfgs.model_name + '.pt')
+    checkpoints_path = os.path.join(checkpoints_dir, test_model + '.pt')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     test_dataset = DatasetTHUNews(cfgs=cfgs, mode='test')
     cfgs.vocab_size = test_dataset.get_vocab_size()
     test_dataloader = DataLoader(test_dataset, batch_size=cfgs.batch_size, shuffle=False, collate_fn=collate_fn)
-    model = TextClassifierLSTM(cfgs) if cfgs.model_name == 'BiLSTM' else TextClassifierTransformer(cfgs)
+    model_name = test_model.split('_')[0]
+    model = TextClassifierLSTM(cfgs) if model_name == 'BiLSTM' else TextClassifierTransformer(cfgs)
     model.load_state_dict(torch.load(checkpoints_path))
     model.to(device)
 
