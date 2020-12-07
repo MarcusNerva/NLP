@@ -118,7 +118,7 @@ def multi_f_beta(pred_y, true_y, labels, beta=1.0):
     f_beta = mean(f_betas)
     return f_beta
 
-
+@torch.no_grad()
 def eval(cfgs, model, dataloader, device):
     prediction, gts = [], []
     for i, (sentences, label, length) in enumerate(dataloader):
