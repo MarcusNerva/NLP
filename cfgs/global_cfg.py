@@ -38,6 +38,15 @@ def get_total_settings():
     parser.add_argument('--is_bilstm', action='store_true', default=False)
 
     """
+    ========================Transformer Settings========================
+    """
+    parser.add_argument('--src_pad_idx', type=int, default=0)
+    parser.add_argument('--num_layers', type=int, default=2)
+    parser.add_argument('--n_heads', type=int, default=8)
+    parser.add_argument('--d_model', type=int, default=512)
+
+
+    """
     ========================classifier Settings========================
     """
     parser.add_argument('--class_number', type=int, default=14)

@@ -116,13 +116,15 @@ class TextClassifierTransformer(nn.Module):
         self.class_number = cfgs.class_number
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.seed = cfgs.seed
+        self.n_heads = cfgs.n_heads
+        self.num_layers = cfgs.num_layers
 
         torch.manual_seed(self.seed)
         torch.cuda.manual_seed(self.seed)
 
         self.embed = nn.Embedding(self.vocab_size, self.d_model, self.src_pad_idx)
-        encoder_layer = nn.TransformerEncoderLayer(d_model=self.d_model, nhead=8)
-        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=2)
+        encoder_layer = nn.TransformerEncoderLayer(d_model=self.d_model, nhead=self.n_heads)
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=self.num_layers)
         self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.d_model,
                                       output_size=self.class_number, length=self.class_number)
 
