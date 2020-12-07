@@ -1,6 +1,6 @@
 from models import TextClassifierLSTM, TextClassifierTransformer, Visualizer, eval
 from cfgs import get_total_settings
-from data import DatasetTHUNews, collate_fn
+from data import DatasetTHUNews, collate_fn, collate_fn_trans
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -42,6 +42,7 @@ if __name__ == '__main__':
 
     vis = Visualizer(env='train model')
     dataset = DatasetTHUNews(cfgs, mode='train')
+    collate_fn = collate_fn if model_name == 'BiLSTM' else collate_fn_trans
     dataloader = DataLoader(dataset, batch_size=cfgs.batch_size, shuffle=True, collate_fn=collate_fn)
     valid_dataset = DatasetTHUNews(cfgs, mode='valid')
     valid_dataloader = DataLoader(valid_dataset, batch_size=cfgs.batch_size, shuffle=True, collate_fn=collate_fn)
@@ -66,6 +67,12 @@ if __name__ == '__main__':
         loss_meter.reset()
         model.train()
 
+        if learning_rate_decay_start != -1 and epoch > learning_rate_decay_start:
+            frac = int((epoch - learning_rate_decay_start) // learning_rate_decay_every)
+            decay_factor = learning_rate_decay_rate ** frac
+            current_lr = learning_rate * decay_factor
+            set_learning_rate(optimizer, current_lr)
+
         for i, (sentences, label, length) in enumerate(dataloader):
             sentences = sentences.to(device)
             label = label.to(device)
@@ -87,6 +94,7 @@ if __name__ == '__main__':
 
             is_best = False
             if (i + 1) % save_checkpoint_every == 0:
+                print('i am in')
                 model.eval()
                 precision, recall, f_score = eval(cfgs, model, valid_dataloader, device)
                 model.train()

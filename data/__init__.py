@@ -1,1 +1,1 @@
-from .dataset import DatasetTHUNews, collate_fn
+from .dataset import DatasetTHUNews, collate_fn, collate_fn_trans

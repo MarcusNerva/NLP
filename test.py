@@ -1,6 +1,6 @@
 from models import TextClassifierLSTM, TextClassifierTransformer, Visualizer, eval
 from cfgs import get_total_settings
-from data import DatasetTHUNews, collate_fn
+from data import DatasetTHUNews, collate_fn, collate_fn_trans
 import torch
 from torch.utils.data import DataLoader
 import os
@@ -9,10 +9,13 @@ if __name__ == '__main__':
     cfgs = get_total_settings()
     seed = cfgs.seed
     test_model = cfgs.test_model
+    model_name = cfgs.model_name
     checkpoints_dir = cfgs.checkpoints_dir
     checkpoints_path = os.path.join(checkpoints_dir, test_model + '.pt')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    assert model_name in ['BiLSTM', 'Transformer'], 'Not Implemented!'
 
+    collate_fn = collate_fn if model_name == 'BiLSTM' else collate_fn_trans
     test_dataset = DatasetTHUNews(cfgs=cfgs, mode='test')
     cfgs.vocab_size = test_dataset.get_vocab_size()
     test_dataloader = DataLoader(test_dataset, batch_size=cfgs.batch_size, shuffle=False, collate_fn=collate_fn)

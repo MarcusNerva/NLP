@@ -1,8 +1,6 @@
 import torch
 import torch.nn as nn
-from .lstm_cell import LSTMCell
 import torch.nn.utils.rnn as rnn_utils
-
 
 def reverse_padded_sequence(inputs, lengths, batch_first=True):
     """Reverses sequences according to their lengths.
@@ -111,6 +109,28 @@ class TextClassifierLSTM(nn.Module):
 class TextClassifierTransformer(nn.Module):
     def __init__(self, cfgs):
         super(TextClassifierTransformer, self).__init__()
+        self.vocab_size = cfgs.vocab_size
+        self.src_pad_idx = cfgs.src_pad_idx
+        self.d_model = cfgs.d_model
+        self.dropout = cfgs.dropout
+        self.class_number = cfgs.class_number
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.seed = cfgs.seed
 
-    def forword(self, sentences):
-        pass
+        torch.manual_seed(self.seed)
+        torch.cuda.manual_seed(self.seed)
+
+        self.embed = nn.Embedding(self.vocab_size, self.d_model, self.src_pad_idx)
+        encoder_layer = nn.TransformerEncoderLayer(d_model=self.d_model, nhead=8)
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=2)
+        self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.d_model,
+                                      output_size=self.class_number, length=self.class_number)
+
+
+    def forward(self, sentences, length):
+        sentences = self.embed(sentences)
+        output = self.transformer(sentences)
+        output, _ = torch.max(output, dim=1)
+        output = self.classifier(output)
+        print(output.shape)
+        return output

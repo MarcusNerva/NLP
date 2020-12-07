@@ -65,15 +65,29 @@ def collate_fn(batch):
     length = list(length)
     return numberic, label, length
 
+def collate_fn_trans(batch):
+    batch.sort(key=lambda x: x[2], reverse=True)
+    numberic, label, length = zip(*batch)
+
+    max_length = length[0]
+    batch_size = len(numberic)
+    ret = torch.zeros((batch_size, max_length)).long()
+
+    label = torch.LongTensor(label)
+    for i in range(batch_size):
+        ret[i, : length[i]] = numberic[i]
+
+    return ret, label, length
+
 if __name__=='__main__':
     from torch.utils.data import DataLoader
 
     cfgs = get_total_settings()
     dataset = DatasetTHUNews(mode='train', cfgs=cfgs)
-    dataloader = DataLoader(dataset, cfgs.batch_size, shuffle=True, collate_fn=collate_fn)
+    dataloader = DataLoader(dataset, 5, shuffle=True, collate_fn=collate_fn_trans)
 
     for i, (sentences, label, length) in enumerate(dataloader):
-        print(sentences.shape)
-        print(label)
+        print(sentences)
+        # print(label)
         # print(length.shape)
-        print(length)
+        # print(length)
