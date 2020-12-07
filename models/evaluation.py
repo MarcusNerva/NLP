@@ -121,7 +121,6 @@ def multi_f_beta(pred_y, true_y, labels, beta=1.0):
 
 def eval(cfgs, model, dataloader, device):
     prediction, gts = [], []
-    model.eval()
     for i, (sentences, label, length) in enumerate(dataloader):
         sentences = sentences.to(device)
         result = model(sentences, length)

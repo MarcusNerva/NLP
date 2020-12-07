@@ -87,7 +87,9 @@ if __name__ == '__main__':
 
             is_best = False
             if (i + 1) % save_checkpoint_every:
+                model.eval()
                 precision, recall, f_score = eval(cfgs, model, valid_dataloader, device)
+                model.train()
                 vis.log('{}'.format('=====F1 score is ' + str(f_score)) + ' iter= ' + str(i))
 
                 if best_score is None or best_score < f_score:

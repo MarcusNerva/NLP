@@ -105,7 +105,6 @@ class TextClassifierLSTM(nn.Module):
             out = torch.cat(out, 2)
 
         out, _ = torch.max(out, dim=1)
-        print(out.shape)
         out = self.classifier(out)
         return out
 
