@@ -59,7 +59,7 @@ def get_total_settings():
     parser.add_argument('--weight_decay', type=float, default=0, help='weight decay')
 
     parser.add_argument('--visualize_every', type=int, default=10, help='show us loss every x iteration')
-    parser.add_argument('--save_checkpoint_every', type=int, default=50)
+    parser.add_argument('--save_checkpoint_every', type=int, default=500)
 
     args = parser.parse_args()
     return args
