@@ -71,6 +71,7 @@ class TextClassifierLSTM(nn.Module):
         self.lstm = nn.ModuleList()
         self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.rnn_size * self.lstm_num,
                                       output_size=self.class_number, length=self.class_number)
+        self.softmax = nn.Softmax(dim=1)
 
         self.lstm.append(nn.LSTM(input_size=self.rnn_size, hidden_size=self.rnn_size, num_layers=1,
                                  batch_first=True, dropout=self.dropout, bidirectional=False))
@@ -104,6 +105,7 @@ class TextClassifierLSTM(nn.Module):
 
         out = torch.sum(out, dim=1)
         out = self.classifier(out)
+        out = self.softmax(out)
         return out
 
 class TextClassifierTransformer(nn.Module):
@@ -127,6 +129,7 @@ class TextClassifierTransformer(nn.Module):
         self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=self.num_layers)
         self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.d_model,
                                       output_size=self.class_number, length=self.class_number)
+        self.softmax = nn.Softmax(dim=1)
 
 
     def forward(self, sentences, length):
@@ -134,4 +137,5 @@ class TextClassifierTransformer(nn.Module):
         output = self.transformer(sentences)
         output = torch.sum(output, dim=1)
         output = self.classifier(output)
+        output = self.softmax(output)
         return output
