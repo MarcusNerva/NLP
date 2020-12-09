@@ -13,7 +13,7 @@ if __name__ == '__main__':
     checkpoints_dir = cfgs.checkpoints_dir
     checkpoints_path = os.path.join(checkpoints_dir, test_model + '.pt')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    assert model_name in ['BiLSTM', 'Transformer'], 'Not Implemented!'
+    assert model_name in ['BiLSTM', 'Transformer'], 'Not Implemented! '
 
     collate_fn = collate_fn if model_name == 'BiLSTM' else collate_fn_trans
     test_dataset = DatasetTHUNews(cfgs=cfgs, mode='test')

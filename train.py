@@ -94,7 +94,6 @@ if __name__ == '__main__':
 
             is_best = False
             if (i + 1) % save_checkpoint_every == 0:
-                print('i am in')
                 model.eval()
                 precision, recall, f_score = eval(cfgs, model, valid_dataloader, device)
                 model.train()

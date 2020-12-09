@@ -102,7 +102,7 @@ class TextClassifierLSTM(nn.Module):
         else:
             out = torch.cat(out, 2)
 
-        out, _ = torch.max(out, dim=1)
+        out = torch.sum(out, dim=1)
         out = self.classifier(out)
         return out
 
@@ -132,6 +132,6 @@ class TextClassifierTransformer(nn.Module):
     def forward(self, sentences, length):
         sentences = self.embed(sentences)
         output = self.transformer(sentences)
-        output, _ = torch.max(output, dim=1)
+        output = torch.sum(output, dim=1)
         output = self.classifier(output)
         return output
