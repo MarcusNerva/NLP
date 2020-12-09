@@ -6,6 +6,7 @@ if __name__ == '__main__':
     from cfgs import get_total_settings
     args = get_total_settings()
     model = BiLSTMClassifier(args)
-    text = '马晓旭意外受伤让国奥警惕 无奈大雨格外青睐殷家军记者傅亚雨沈阳报道 来到沈阳，国奥队依然没有摆脱雨水的困扰。\
-    7月31日下午6点，国奥队的日常训练再度受到大雨的干扰，无奈之下队员们只慢跑了25分钟就草草收场。'
+    text = '张新军蔡启煌麓山并列领先 记分卡直播决赛轮新浪体育讯　\
+    9月4日-7日，2008年欧米茄中巡赛麓山锦标赛将在成都麓山国际高尔夫俱乐部举行。\
+    共有112人报名参加本站赛事，其中包括国家队7位队员在内的10位业余球员。'
     print(model.classify(text))
