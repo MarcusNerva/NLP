@@ -14,7 +14,7 @@ class Application_Classifier:
         self.word2int_path = cfgs.hhy_word2int_path
         with open(self.word2int_path, 'rb') as f:
             self.word2int = pickle.load(f)
-        cfgs.vocab_size = len(self.word2int + 1)
+        cfgs.vocab_size = len(self.word2int) + 1
 
         self.model = TextClassifierTransformer(cfgs) if cfgs.hhy_idx == 1 else TextClassifierLSTM(cfgs)
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
