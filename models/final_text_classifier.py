@@ -12,6 +12,10 @@ class Application_Classifier:
     def __init__(self, cfgs):
         self.model_path = cfgs.hhy_transformer_path if cfgs.hhy_idx == 1 else cfgs.hhy_bilstm_path
         self.word2int_path = cfgs.hhy_word2int_path
+        with open(self.word2int_path, 'rb') as f:
+            self.word2int = pickle.load(f)
+        cfgs.vocab_size = len(self.word2int)
+
         self.model = TextClassifierTransformer(cfgs) if cfgs.hhy_idx == 1 else TextClassifierLSTM(cfgs)
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.news_type = ['constellation', 'entertainment', 'finance', 'home', 'lottery',
@@ -19,8 +23,6 @@ class Application_Classifier:
                           'pe', 'social', 'technology']
         self.total_punctuation = punctuation + '0123456789' + string.punctuation
 
-        with open(self.word2int_path, 'rb') as f:
-            self.word2int = pickle.load(f)
         self.model.load_state_dict(torch.load(self.model_path))
         self.model.to(device=self.device)
 
