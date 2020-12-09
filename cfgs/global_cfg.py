@@ -75,5 +75,14 @@ def get_total_settings():
     parser.add_argument('--test_model', type=str, default='')
 
 
+    """
+    ========================Application Settings========================
+    """
+    parser.add_argument('--hhy_transformer_path', type=str, default='/home/hanhuaye/PythonProject/NLP/checkpoints/trans_2layers_40_3e-4.pt')
+    parser.add_argument('--hhy_bilstm_path', type=str, default='/home/hanhuaye/PythonProject/NLP/checkpoints/BiLSTM_40_3e-4.pt')
+    parser.add_argument('--hhy_word2int_path', type=str, default='/home/hanhuaye/PythonProject/NLP/data/word2int.pkl')
+    parser.add_argument('--hhy_idx', type=int, default=0)
+
+
     args = parser.parse_args()
     return args
