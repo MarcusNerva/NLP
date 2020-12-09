@@ -69,8 +69,9 @@ class TextClassifierLSTM(nn.Module):
         torch.cuda.manual_seed(self.seed)
         self.embed = nn.Embedding(self.vocab_size, self.rnn_size)
         self.lstm = nn.ModuleList()
-        self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.rnn_size * self.lstm_num,
-                                      output_size=self.class_number, length=self.class_number)
+        # self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.rnn_size * self.lstm_num,
+        #                               output_size=self.class_number, length=self.class_number)
+        self.classifier = nn.Linear(in_features=self.rnn_size * self.lstm_num, out_features=self.class_number)
         self.softmax = nn.Softmax(dim=1)
 
         self.lstm.append(nn.LSTM(input_size=self.rnn_size, hidden_size=self.rnn_size, num_layers=1,
@@ -79,10 +80,17 @@ class TextClassifierLSTM(nn.Module):
             self.lstm.append(nn.LSTM(input_size=self.rnn_size, hidden_size=self.rnn_size, num_layers=1,
                                  batch_first=True, dropout=self.dropout, bidirectional=False))
 
+        self.init_weight()
+
     def init_hidden(self, batch_size):
         return (torch.zeros(1, batch_size, self.rnn_size).to(self.device),
                 torch.zeros(1, batch_size, self.rnn_size).to(self.device))
 
+    def init_weight(self):
+        initrange = 0.1
+        self.embed.weight.data.uniform_(-initrange, initrange)
+        self.classifier.weight.data.uniform_(-initrange, initrange)
+        self.classifier.bias.data.fill_(0)
 
     def forward(self, numberic, length):
         batch_size = numberic.shape[0]
@@ -103,7 +111,7 @@ class TextClassifierLSTM(nn.Module):
         else:
             out = torch.cat(out, 2)
 
-        out = torch.sum(out, dim=1)
+        out = torch.mean(out, dim=1)
         out = self.classifier(out)
         out = self.softmax(out)
         return out
@@ -127,15 +135,23 @@ class TextClassifierTransformer(nn.Module):
         self.embed = nn.Embedding(self.vocab_size, self.d_model, self.src_pad_idx)
         encoder_layer = nn.TransformerEncoderLayer(d_model=self.d_model, nhead=self.n_heads)
         self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=self.num_layers)
-        self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.d_model,
-                                      output_size=self.class_number, length=self.class_number)
+        # self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.d_model,
+        #                               output_size=self.class_number, length=self.class_number)
+        self.classifier = nn.Linear(in_features=self.d_model, out_features=self.class_number)
         self.softmax = nn.Softmax(dim=1)
 
+        self.init_weight()
+
+    def init_weight(self):
+        initrange = 0.1
+        self.embed.weight.data.uniform_(-initrange, initrange)
+        self.classifier.weight.data.uniform_(-initrange, initrange)
+        self.classifier.bias.data.fill_(0)
 
     def forward(self, sentences, length):
         sentences = self.embed(sentences)
         output = self.transformer(sentences)
-        output = torch.sum(output, dim=1)
+        output = torch.mean(output, dim=1)
         output = self.classifier(output)
         output = self.softmax(output)
         return output
