@@ -39,7 +39,8 @@ class Application_Classifier:
 
         numbers = torch.LongTensor(numbers)
         numbers.unsqueeze(dim=0)
-        out = self.model(numbers, len(numbers))
+        numbers = numbers.to(self.device)
+        out = self.model(numbers, list(len(numbers)))
         out = torch.argmax(out, dim=1).item()
         return self.news_type[out]
 
