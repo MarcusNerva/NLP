@@ -63,6 +63,7 @@ class BiLSTMClassifier:
 
         self.model.load_state_dict(torch.load(self.model_path))
         self.model.to(device=self.device)
+        self.model.eval()
 
     def classify(self, text):
         text = re.sub('\s', '', text)
