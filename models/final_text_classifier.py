@@ -76,7 +76,7 @@ class BiLSTMClassifier:
             numbers.append(self.word2int[text[i]])
 
         numbers = torch.LongTensor(numbers)
-        numbers.unsqueeze(dim=0)
+        numbers = [numbers]
         numbers = rnn_utils.pad_sequence(numbers, batch_first=True, padding_value=0)
         numbers = numbers.to(self.device)
         out = self.model(numbers, [len(numbers)])
