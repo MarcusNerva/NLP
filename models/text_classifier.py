@@ -48,6 +48,7 @@ class Linearlayer(nn.Module):
         )
 
     def forward(self, features):
+        print(features.shape)
         return self.linear(features)
 
 
@@ -119,6 +120,7 @@ class TextClassifierLSTM(nn.Module):
 class TextClassifierTransformer(nn.Module):
     def __init__(self, cfgs):
         super(TextClassifierTransformer, self).__init__()
+        self.cfgs = cfgs
         self.vocab_size = cfgs.vocab_size
         self.src_pad_idx = cfgs.src_pad_idx
         self.d_model = cfgs.d_model
@@ -128,6 +130,9 @@ class TextClassifierTransformer(nn.Module):
         self.seed = cfgs.seed
         self.n_heads = cfgs.n_heads
         self.num_layers = cfgs.num_layers
+        self.news_type = ['constellation', 'entertainment', 'finance', 'home', 'lottery',
+                          'politics', 'stock', 'education', 'fashion', 'game', 'house',
+                          'pe', 'social', 'technology']
 
         torch.manual_seed(self.seed)
         torch.cuda.manual_seed(self.seed)
@@ -156,3 +161,23 @@ class TextClassifierTransformer(nn.Module):
         output = self.softmax(output)
         return output
 
+    @torch.no_grad()
+    def predict(self, text):
+        import re
+        from zhon.hanzi import punctuation
+        import string
+
+        total_punctuation = punctuation + '0123456789' + string.punctuation
+        text = re.sub('\s', '', text)
+        text = re.sub(r'[%s]+' % total_punctuation, '', text)
+        text = re.sub('[a-zA-Z]', '', text)
+        self.load_state_dict(torch.load(self.cfgs.hhy_transformer_path))
+        self.eval()
+        self.to(self.device)
+
+        out = self.forward(text, None)
+        print('out:')
+        print(out)
+        out = self.softmax(out)
+        out = torch.argmax(out, dim=1).item()
+        return self.news_type[out]

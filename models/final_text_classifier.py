@@ -70,7 +70,7 @@ class BiLSTMClassifier:
         text = re.sub('\s', '', text)
         text = re.sub(r'[%s]+' % self.total_punctuation, '', text)
         text = re.sub('[a-zA-Z]', '', text)
-        print(text)
+        # print(text)
         numbers = []
         for i in range(len(text)):
             # if len(numbers) >= 40: break
