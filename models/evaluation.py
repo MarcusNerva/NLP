@@ -124,7 +124,7 @@ def eval(cfgs, model, dataloader, device):
     for i, (sentences, label, length) in enumerate(dataloader):
         sentences = sentences.to(device)
         result = model(sentences, length)
-        result = F.softmax(result, dim=1)
+        # result = F.softmax(result, dim=1)
         result = torch.argmax(result, dim=1)
         prediction += result
         gts += label

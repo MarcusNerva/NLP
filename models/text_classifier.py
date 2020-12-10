@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.utils.rnn as rnn_utils
+import pickle
 
 def reverse_padded_sequence(inputs, lengths, batch_first=True):
     """Reverses sequences according to their lengths.
@@ -42,7 +43,7 @@ class Linearlayer(nn.Module):
 
         self.linear = nn.Sequential(
             nn.Linear(input_size, output_size),
-            nn.BatchNorm1d(length),
+            # nn.BatchNorm1d(length),
             nn.ReLU(True),
             nn.Dropout(drop_prob)
         )
@@ -121,6 +122,10 @@ class TextClassifierTransformer(nn.Module):
     def __init__(self, cfgs):
         super(TextClassifierTransformer, self).__init__()
         self.cfgs = cfgs
+        self.word2int_path = cfgs.hhy_word2int_path
+        with open(self.word2int_path, 'rb') as f:
+            self.word2int = pickle.load(f)
+        cfgs.vocab_size = len(self.word2int) + 1
         self.vocab_size = cfgs.vocab_size
         self.src_pad_idx = cfgs.src_pad_idx
         self.d_model = cfgs.d_model
@@ -140,9 +145,9 @@ class TextClassifierTransformer(nn.Module):
         self.embed = nn.Embedding(self.vocab_size, self.d_model, self.src_pad_idx)
         encoder_layer = nn.TransformerEncoderLayer(d_model=self.d_model, nhead=self.n_heads)
         self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=self.num_layers)
-        # self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.d_model,
-        #                               output_size=self.class_number, length=self.class_number)
-        self.classifier = nn.Linear(in_features=self.d_model, out_features=self.class_number)
+        self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.d_model,
+                                      output_size=self.class_number, length=self.class_number)
+        # self.classifier = nn.Linear(in_features=self.d_model, out_features=self.class_number)
         self.softmax = nn.Softmax(dim=1)
 
         # self.init_weight()
@@ -171,6 +176,17 @@ class TextClassifierTransformer(nn.Module):
         text = re.sub('\s', '', text)
         text = re.sub(r'[%s]+' % total_punctuation, '', text)
         text = re.sub('[a-zA-Z]', '', text)
+        numbers = []
+        for i in range(len(text)):
+            # if len(numbers) >= 40: break
+            if text[i] not in self.word2int.keys(): continue
+
+            numbers.append(self.word2int[text[i]])
+
+        numbers = torch.LongTensor(numbers)
+        numbers.unsqueeze(dim=0)
+        numbers = numbers.to(self.device)
+
         self.load_state_dict(torch.load(self.cfgs.hhy_transformer_path))
         self.eval()
         self.to(self.device)
