@@ -26,6 +26,7 @@ class TransformerClassifier:
 
         self.model.load_state_dict(torch.load(self.model_path))
         self.model.to(device=self.device)
+        self.model.eval()
 
     def classify(self, text):
         text = re.sub('\s', '', text)
@@ -41,7 +42,7 @@ class TransformerClassifier:
         numbers = torch.LongTensor(numbers)
         numbers.unsqueeze(dim=0)
         numbers = numbers.to(self.device)
-        out = self.model(numbers, [len(numbers)])
+        out = self.model(numbers, [len(numbers[0])])
         out = torch.argmax(out, dim=1).item()
         return self.news_type[out]
 
@@ -81,6 +82,6 @@ class BiLSTMClassifier:
         numbers = [numbers]
         numbers = rnn_utils.pad_sequence(numbers, batch_first=True, padding_value=0)
         numbers = numbers.to(self.device)
-        out = self.model(numbers, [len(numbers)])
+        out = self.model(numbers, [len(numbers[0])])
         out = torch.argmax(out, dim=1).item()
         return self.news_type[out]

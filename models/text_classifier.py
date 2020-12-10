@@ -69,9 +69,9 @@ class TextClassifierLSTM(nn.Module):
         torch.cuda.manual_seed(self.seed)
         self.embed = nn.Embedding(self.vocab_size, self.rnn_size)
         self.lstm = nn.ModuleList()
-        self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.rnn_size * self.lstm_num,
-                                      output_size=self.class_number, length=self.class_number)
-        # self.classifier = nn.Linear(in_features=self.rnn_size * self.lstm_num, out_features=self.class_number)
+        # self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.rnn_size * self.lstm_num,
+        #                               output_size=self.class_number, length=self.class_number)
+        self.classifier = nn.Linear(in_features=self.rnn_size * self.lstm_num, out_features=self.class_number)
         self.softmax = nn.Softmax(dim=1)
 
         self.lstm.append(nn.LSTM(input_size=self.rnn_size, hidden_size=self.rnn_size, num_layers=1,
@@ -135,9 +135,9 @@ class TextClassifierTransformer(nn.Module):
         self.embed = nn.Embedding(self.vocab_size, self.d_model, self.src_pad_idx)
         encoder_layer = nn.TransformerEncoderLayer(d_model=self.d_model, nhead=self.n_heads)
         self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=self.num_layers)
-        self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.d_model,
-                                      output_size=self.class_number, length=self.class_number)
-        # self.classifier = nn.Linear(in_features=self.d_model, out_features=self.class_number)
+        # self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.d_model,
+        #                               output_size=self.class_number, length=self.class_number)
+        self.classifier = nn.Linear(in_features=self.d_model, out_features=self.class_number)
         self.softmax = nn.Softmax(dim=1)
 
         # self.init_weight()

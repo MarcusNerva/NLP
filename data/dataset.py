@@ -60,7 +60,7 @@ def collate_fn(batch):
     batch.sort(key=lambda x: x[2], reverse=True)
     numberic, label, length = zip(*batch)
 
-    numberic = rnn_utils.pad_sequence(numberic,batch_first=True, padding_value=0)
+    numberic = rnn_utils.pad_sequence(numberic, batch_first=True, padding_value=0)
     label = torch.LongTensor(label)
     length = list(length)
     return numberic, label, length
