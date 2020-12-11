@@ -82,6 +82,8 @@ def multi_precision(pred_y, true_y, labels):
         pred_y = [item[0] for item in pred_y]
 
     precisions = [binary_precision(pred_y, true_y, label) for label in labels]
+    for i in range(len(precisions)):
+        print('i == {i}, precision == {precision}'.format(i=i, precision=precisions[i]))
     prec = mean(precisions)
     return prec
 
@@ -98,6 +100,8 @@ def multi_recall(pred_y, true_y, labels):
         pred_y = [item[0] for item in pred_y]
 
     recalls = [binary_recall(pred_y, true_y, label) for label in labels]
+    for i in range(len(recalls)):
+        print('i == {i}, recall == {recall}'.format(i=i, recall=recalls[i]))
     rec = mean(recalls)
     return rec
 
@@ -115,6 +119,8 @@ def multi_f_beta(pred_y, true_y, labels, beta=1.0):
         pred_y = [item[0] for item in pred_y]
 
     f_betas = [binary_f_beta(pred_y, true_y, beta, label) for label in labels]
+    for i in range(len(f_betas)):
+        print('i == {i}, f_1 == {f_1}'.format(i=i, f_1=f_betas[i]))
     f_beta = mean(f_betas)
     return f_beta
 

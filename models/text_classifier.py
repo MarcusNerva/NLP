@@ -43,9 +43,10 @@ class Linearlayer(nn.Module):
 
         self.linear = nn.Sequential(
             nn.Linear(input_size, output_size),
-            # nn.BatchNorm1d(length),
+            nn.BatchNorm1d(length),
             nn.ReLU(True),
-            nn.Dropout(drop_prob)
+            nn.Dropout(drop_prob),
+            nn.Linear(output_size, output_size)
         )
 
     def forward(self, features):
@@ -66,6 +67,9 @@ class TextClassifierLSTM(nn.Module):
         self.bilstm = args.is_bilstm
         self.lstm_num = 2 if self.bilstm else 1
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.news_type = ['constellation', 'entertainment', 'finance', 'home', 'lottery',
+                          'politics', 'stock', 'education', 'fashion', 'game', 'house',
+                          'pe', 'social', 'technology']
 
         torch.manual_seed(self.seed)
         torch.cuda.manual_seed(self.seed)
@@ -82,17 +86,11 @@ class TextClassifierLSTM(nn.Module):
             self.lstm.append(nn.LSTM(input_size=self.rnn_size, hidden_size=self.rnn_size, num_layers=1,
                                  batch_first=True, dropout=self.dropout, bidirectional=False))
 
-        # self.init_weight()
 
     def init_hidden(self, batch_size):
         return (torch.zeros(1, batch_size, self.rnn_size).to(self.device),
                 torch.zeros(1, batch_size, self.rnn_size).to(self.device))
 
-    # def init_weight(self):
-    #     initrange = 0.1
-    #     self.embed.weight.data.uniform_(-initrange, initrange)
-    #     self.classifier.weight.data.uniform_(-initrange, initrange)
-    #     self.classifier.bias.data.fill_(0)
 
     def forward(self, numberic, length):
         batch_size = numberic.shape[0]
@@ -115,8 +113,37 @@ class TextClassifierLSTM(nn.Module):
 
         out = torch.mean(out, dim=1)
         out = self.classifier(out)
-        out = self.softmax(out)
         return out
+
+    @torch.no_grad()
+    def predict(self, text):
+        import re
+        from zhon.hanzi import punctuation
+        import string
+
+        self.load_state_dict(torch.load(self.cfgs.transformer_path))
+        self.eval()
+        self.to(self.device)
+
+        total_punctuation = punctuation + '0123456789' + string.punctuation
+        text = re.sub('\s', '', text)
+        text = re.sub(r'[%s]+' % total_punctuation, '', text)
+        text = re.sub('[a-zA-Z]', '', text)
+        numbers = []
+        for i in range(len(text)):
+            if text[i] not in self.word2int.keys(): continue
+            numbers.append(self.word2int[text[i]])
+
+        numbers = torch.LongTensor(numbers)
+        numbers = [numbers]
+        numbers = rnn_utils.pad_sequence(numbers, batch_first=True, padding_value=0)
+        numbers = numbers.to(self.device)
+
+        out = self.forward(numbers, [len(numbers[0])])
+        out = self.softmax(out)
+        out = torch.argmax(out, dim=1).item()
+        return self.news_type[out]
+
 
 class TextClassifierTransformer(nn.Module):
     def __init__(self, cfgs):
@@ -150,20 +177,11 @@ class TextClassifierTransformer(nn.Module):
         # self.classifier = nn.Linear(in_features=self.d_model, out_features=self.class_number)
         self.softmax = nn.Softmax(dim=1)
 
-        # self.init_weight()
-
-    def init_weight(self):
-        initrange = 0.1
-        self.embed.weight.data.uniform_(-initrange, initrange)
-        self.classifier.weight.data.uniform_(-initrange, initrange)
-        self.classifier.bias.data.fill_(0)
-
     def forward(self, sentences, length):
         sentences = self.embed(sentences)
         output = self.transformer(sentences)
         output = torch.mean(output, dim=1)
         output = self.classifier(output)
-        output = self.softmax(output)
         return output
 
     @torch.no_grad()
@@ -172,28 +190,24 @@ class TextClassifierTransformer(nn.Module):
         from zhon.hanzi import punctuation
         import string
 
+        self.load_state_dict(torch.load(self.cfgs.transformer_path))
+        self.eval()
+        self.to(self.device)
+
         total_punctuation = punctuation + '0123456789' + string.punctuation
         text = re.sub('\s', '', text)
         text = re.sub(r'[%s]+' % total_punctuation, '', text)
         text = re.sub('[a-zA-Z]', '', text)
         numbers = []
         for i in range(len(text)):
-            # if len(numbers) >= 40: break
             if text[i] not in self.word2int.keys(): continue
-
             numbers.append(self.word2int[text[i]])
 
         numbers = torch.LongTensor(numbers)
-        numbers.unsqueeze(dim=0)
+        numbers = numbers.unsqueeze(dim=0)
         numbers = numbers.to(self.device)
 
-        self.load_state_dict(torch.load(self.cfgs.hhy_transformer_path))
-        self.eval()
-        self.to(self.device)
-
-        out = self.forward(text, None)
-        print('out:')
-        print(out)
+        out = self.forward(numbers, None)
         out = self.softmax(out)
         out = torch.argmax(out, dim=1).item()
         return self.news_type[out]
