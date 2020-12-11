@@ -125,9 +125,10 @@ class TextClassifierLSTM(nn.Module):
         from zhon.hanzi import punctuation
         import string
 
-        self.load_state_dict(torch.load(self.args.bilstm_path))
-        self.eval()
-        self.to(self.device)
+        if self.is_training:
+            self.load_state_dict(torch.load(self.args.bilstm_path))
+            self.eval()
+            self.to(self.device)
 
         total_punctuation = punctuation + '0123456789' + string.punctuation
         text = re.sub('\s', '', text)
@@ -194,9 +195,10 @@ class TextClassifierTransformer(nn.Module):
         from zhon.hanzi import punctuation
         import string
 
-        self.load_state_dict(torch.load(self.cfgs.transformer_path))
-        self.eval()
-        self.to(self.device)
+        if self.is_training:
+            self.load_state_dict(torch.load(self.cfgs.transformer_path))
+            self.eval()
+            self.to(self.device)
 
         total_punctuation = punctuation + '0123456789' + string.punctuation
         text = re.sub('\s', '', text)
