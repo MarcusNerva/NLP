@@ -57,7 +57,11 @@ class Linearlayer(nn.Module):
 class TextClassifierLSTM(nn.Module):
     def __init__(self, args):
         super(TextClassifierLSTM, self).__init__()
-
+        self.args = args
+        self.word2int_path = args.hhy_word2int_path
+        with open(self.word2int_path, 'rb') as f:
+            self.word2int = pickle.load(f)
+        args.vocab_size = len(self.word2int) + 1
         self.rnn_size = args.rnn_size
         self.word_size = args.word_size
         self.vocab_size = args.vocab_size
