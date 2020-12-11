@@ -50,7 +50,7 @@ class Linearlayer(nn.Module):
         )
 
     def forward(self, features):
-        print(features.shape)
+        # print(features.shape)
         return self.linear(features)
 
 
@@ -79,9 +79,9 @@ class TextClassifierLSTM(nn.Module):
         torch.cuda.manual_seed(self.seed)
         self.embed = nn.Embedding(self.vocab_size, self.rnn_size)
         self.lstm = nn.ModuleList()
-        # self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.rnn_size * self.lstm_num,
-        #                               output_size=self.class_number, length=self.class_number)
-        self.classifier = nn.Linear(in_features=self.rnn_size * self.lstm_num, out_features=self.class_number)
+        self.classifier = Linearlayer(seed=self.seed, drop_prob=self.dropout, input_size=self.rnn_size * self.lstm_num,
+                                      output_size=self.class_number, length=self.class_number)
+        # self.classifier = nn.Linear(in_features=self.rnn_size * self.lstm_num, out_features=self.class_number)
         self.softmax = nn.Softmax(dim=1)
 
         self.lstm.append(nn.LSTM(input_size=self.rnn_size, hidden_size=self.rnn_size, num_layers=1,

@@ -25,7 +25,10 @@ if __name__ == '__main__':
     model.to(device)
 
     model.eval()
-    precision, recall, f_score = eval(cfgs, model, test_dataloader, device)
+    precision, recall, f_score, matrix = eval(cfgs, model, test_dataloader, device, is_test=True)
     print('###########precision == {precision}###########'.format(precision=precision))
     print('###########recall == {recall}###########'.format(recall=recall))
     print('###########f_score == {f_score}###########'.format(f_score=f_score))
+    matrix_path = os.path.join(cfgs.checkpoints_dir, model_name + '_matrix.npy')
+    import numpy as np
+    np.save(matrix_path, matrix)

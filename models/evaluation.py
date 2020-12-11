@@ -125,13 +125,13 @@ def multi_f_beta(pred_y, true_y, labels, beta=1.0):
     return f_beta
 
 @torch.no_grad()
-def eval(cfgs, model, dataloader, device):
+def eval(cfgs, model, dataloader, device, is_test=False):
     prediction, gts = [], []
     for i, (sentences, label, length) in enumerate(dataloader):
         sentences = sentences.to(device)
         result = model(sentences, length)
         # result = F.softmax(result, dim=1)
-        result = torch.argmax(result, dim=1)
+        result = torch.argmax(result, dim=1).item()
         prediction += result
         gts += label
 
@@ -139,5 +139,15 @@ def eval(cfgs, model, dataloader, device):
     precision = multi_precision(prediction, gts, label)
     recall = multi_recall(prediction, gts, label)
     f_score = multi_f_beta(prediction, gts, label)
-
+    if is_test:
+        matrix = get_matrix(gts, prediction)
+        return precision, recall, f_score, matrix
     return precision, recall, f_score
+
+def get_matrix(gts, predictions):
+    import numpy as np
+    matrix = np.zeros((14, 14)).astype(int)
+    for i in range(len(gts)):
+        x, y = gts[i], predictions[i]
+        matrix[x, y] += 1
+    return matrix
