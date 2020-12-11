@@ -28,7 +28,7 @@ def get_total_settings():
     # parser.add_argument('--valid_path', type=str, default='/Users/bismarck/PycharmProjects/NLP/data/valid.pkl')
     parser.add_argument('--test_path', type=str, default='/home/hanhuaye/PythonProject/NLP/data/test.pkl')
     # parser.add_argument('--test_path', type=str, default='/Users/bismarck/PycharmProjects/NLP/data/test.pkl')
-    parser.add_argument('--cut_length', type=int, default=-1)
+    parser.add_argument('--text_numbers', type=int, default=-1)
 
     """
     ========================LSTM Settings========================
