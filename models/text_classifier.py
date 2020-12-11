@@ -125,7 +125,7 @@ class TextClassifierLSTM(nn.Module):
         from zhon.hanzi import punctuation
         import string
 
-        self.load_state_dict(torch.load(self.cfgs.transformer_path))
+        self.load_state_dict(torch.load(self.args.bilstm_path))
         self.eval()
         self.to(self.device)
 
