@@ -32,7 +32,7 @@ def save_as_pkl(cfgs, news_idx, news_type):
     """
     data_dir = cfgs.data_dir
     news_dir = cfgs.news_dir
-    cut_length = cfgs.cut_length
+    text_numbers = cfgs.text_numbers
     news_name = news_type[news_idx]
     word_set = set()
     sentence_store = []
@@ -42,7 +42,7 @@ def save_as_pkl(cfgs, news_idx, news_type):
     sentence_path = os.path.join(data_dir, news_name + '_sentences.pkl')
 
     txt_list = glob.glob(os.path.join(specific_dir, '*.txt'))
-    txt_list = txt_list[:cut_length] if len(txt_list) > cut_length else txt_list
+    txt_list = txt_list[:text_numbers] if len(txt_list) > text_numbers else txt_list
     for i in range(len(txt_list)):
         txt_path = txt_list[i]
         with open(txt_path, 'r', encoding='utf-8') as f:
